@@ -1,0 +1,31 @@
+@startuml
+class Dummy1 {
++myMethods()
+}
+class Dummy2 {
++hiddenMethod()
+}
+class Dummy3 <<Serializable>> {
+String name
+}
+
+'隐藏所有的成员
+hide members
+
+'隐藏原型
+hide stereotype
+
+show stereotype
+
+'隐藏类名前带圈的
+hide <<Serializable>> circle
+
+'显示Dummy1的方法
+show Dummy1 methods
+
+'隐藏类
+hide Dummy2
+
+'显示<<Serializable>>的字段
+show <<Serializable>> fields
+@enduml

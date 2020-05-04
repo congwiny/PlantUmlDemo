@@ -1,0 +1,17 @@
+@startuml
+'类之间默认采用两个破折号 -- 显示出垂直方向的线.
+'要得到水平方向的可以像这样使用单破折号 (或者点):
+Room o- Student
+Room *-- Chair
+
+'你也可以通过改变倒置链接来改变方向
+Student2 -o Room2
+Chair2 --* Room2
+
+'也可通过在箭头内部使用关键字，
+'例如 left, right, up 或者 down，来改变方向
+foo -left-> dummyLeft
+foo -right-> dummyRight
+foo -up-> dummyUp
+foo -down-> dummyDown
+@enduml

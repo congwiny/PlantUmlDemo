@@ -1,0 +1,36 @@
+@startuml
+'用关键字 abstract 或 abstract class 来定义抽象类。抽象类用斜体显示。
+'使用 interface定义接口。
+'也可以使用annotation 和 enum 关键字。
+
+'抽象类
+abstract class AbstractList
+abstract AbstractCollection
+
+'接口
+interface List
+interface Collection
+
+'继承与实现
+List <|-- AbstractList
+Collection <|-- AbstractCollection
+Collection <|- List
+AbstractCollection <|- AbstractList
+AbstractList <|-- ArrayList
+
+class ArrayList {
+Object[] elementData
+size()
+}
+
+'枚举类
+enum TimeUnit {
+DAYS
+HOURS
+MINUTES
+}
+
+' 注解
+annotation SuppressWarnings
+
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+title 类之间的关系
+' Class02继承Class01，箭头朝上
+Class01 <|-- Class02
+note left of Class02 : Class02继承Class01，箭头朝上
+
+
+Class12 --|> Class11
+note left of Class12 : Class12继承Class11，箭头朝下
+
+
+'Class03和Class04的关系是组合，Class04是组成Class03的一部分
+Class03 *-- Class04
+note "Class03和Class04的关系是组合，Class04是组成Class03的一部分" as N1
+Class03 .. N1
+N1 .. Class04
+
+' Class05和Class06的关系是聚合，是整体与部分的关系，部分可脱离整体而单独存在
+' 表示符号带空心菱形的实线，菱形指向整体
+Class05 o-- Class06
+note left
+Class05和Class06的关系是聚合，
+Class06聚成了Class05，Class06也可单独存在
+end note
+
+Class07 .. Class08
+
+'双向关联箭头可有可无
+Class09 -- Class10
+note "Class09和Class010的关系是关联，双向关联的箭头可有可无" as N2
+Class09 .. N2
+N2 .. Class10
+@enduml

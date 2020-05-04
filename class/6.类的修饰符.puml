@@ -1,0 +1,21 @@
+@startuml
+
+' skinparam classAttributeIconSize 0
+
+class Dummy {
+' 私有
+-field1
+' 保护
+#field2
+' 包私有
+~field3
+' 公有
++field4
+
+-method1()
+#method2()
+~method3()
++method4()
+}
+
+@enduml

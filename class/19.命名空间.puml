@@ -1,0 +1,19 @@
+@startuml
+class BaseClass
+namespace net.dummy #DDDDDD {
+    '默认的命名空间以.开头
+    .BaseClass <|-- Person
+    Meeting o-- Person
+    .BaseClass <|- Meeting
+}
+
+namespace net.foo {
+    '使用其他的命名空间下的类
+    net.dummy.Person <|- Person
+    .BaseClass <|-- Person
+    net.dummy.Meeting o-- Person
+}
+
+'一个使用全限定名的类会自动被放置到对应的命名空间
+BaseClass <|-- net.unused.Person
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+'你可以通过关键词 package 声明包，同时可选的来声明对应的背景色（通过使用 html 色彩代码或名称）。
+'注意：包可以被定义为嵌套。
+
+package "Classic Collections" #DDDDDD {
+    Object <|-- ArrayList
+}
+
+package net.sourceforge.plantuml {
+    Object <|-- Demo1
+    Demo1 *- Demo2
+}
+@enduml

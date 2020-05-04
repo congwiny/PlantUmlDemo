@@ -1,0 +1,10 @@
+@startuml
+'你可以用 < 和 > 来定义类的泛型。
+
+class Foo<? extends Element> {
+int size()
+}
+
+Foo *- Element
+
+@enduml
