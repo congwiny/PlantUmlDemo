@@ -1,0 +1,15 @@
+@startuml
+'使用括号定义连接器
+
+start
+:Some activity;
+
+(A)
+
+detach
+
+(A)
+
+:Other activity;
+
+@enduml

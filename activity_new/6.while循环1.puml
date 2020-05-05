@@ -1,0 +1,12 @@
+@startuml
+'可以使用关键字:
+'while 和 end while 进行 while 循环。
+start
+
+while (data available?)
+:read data;
+:generate diagrams;
+endwhile
+
+end
+@enduml

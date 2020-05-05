@@ -1,0 +1,10 @@
+@startuml
+'你可以使用关键字 start 和 stop 表示图示的开始和结束。
+start
+:Hello world;
+:This is on defined on
+several **lines**;
+
+'也可以使用 end 关键字表示结束。
+stop
+@enduml

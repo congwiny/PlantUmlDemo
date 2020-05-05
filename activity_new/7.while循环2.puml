@@ -1,0 +1,10 @@
+@startuml
+'还可以在关键字 endwhile 后添加标注，使用关键字 is。
+
+while (check filesize ?) is (not empty)
+:read file;
+endwhile (empty)
+
+:close file;
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+'文本格式支持 creole wiki 语法。
+'使用 floating 关键字，备注可以单独悬浮
+
+start
+:foo1;
+'悬浮注释
+floating note left: This is a note
+
+:foo2;
+'多行注释
+note right
+This note is on several
+//lines// and can
+contain <b>HTML</b>
+====
+* Calling the method ""foo()"" is prohibited
+end note
+
+stop
+@enduml

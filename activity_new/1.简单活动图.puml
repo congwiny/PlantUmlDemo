@@ -1,0 +1,10 @@
+@startuml
+'活动标签 (activity label) 以冒号开始，以分号结束。
+'文本格式支持 creole wiki 语法。
+'活动默认安装它们定义的顺序进行连接。
+
+:Hello world;
+:This is on defined on
+several **lines**;
+
+@enduml
