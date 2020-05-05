@@ -1,0 +1,21 @@
+@startuml
+'使用 title 关键字添加标题。你可以在标题描述中使用 \n 添加新行
+'一些skinparam设置可被用于标题
+'你也可以使用creole格式化标题
+
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Aqua-CadetBlue
+
+'title Simple communication\nexample
+
+title
+<u>Simple</u> communication example
+on <i>several</i> lines and using <back:cadetblue>creole tags</back>
+end title
+
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+@enduml

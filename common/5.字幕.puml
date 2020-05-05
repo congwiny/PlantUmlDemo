@@ -1,0 +1,11 @@
+@startuml
+'使用 caption 关键字把字幕放在图的底部
+
+caption figure 1
+
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: another authentication Response
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+/'
+legend 和 end legend 作为关键词 用于配置一个图例 (legend).
+支持可选地使用 left,right,center 为这个图例指定对齐方式
+'/
+
+Alice -> Bob : Hello
+legend right
+    Short
+    legend
+endlegend
+
+@enduml

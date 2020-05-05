@@ -1,0 +1,24 @@
+@startuml
+
+/'
+你可以使用 header 和 footer 命令在生成的图中增加页眉和页脚。
+
+你可以选择指定:
+center, left 或 right 关键字使页眉或页脚实现居中、左对齐和右对齐。
+
+像标题一样，页眉或页脚内容可以在多行中定义，
+而且同样可以在页眉或页脚中输入一些 HTML 代码。
+'/
+
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+
+header
+    <font color=red>Warning:</font>
+    Do not use in production.
+endheader
+
+center footer Generated for demonstration
+
+@enduml
