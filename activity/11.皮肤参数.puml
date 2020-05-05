@@ -1,0 +1,32 @@
+@startuml
+'用 skinparam 命令修改字体和颜色。
+'如下场景可用：
+' • 在图示定义中
+' • 在引入的文件中
+' • 在命令行或 ANT 任务提供的配置文件中。
+'还可以为构造类型指定特殊颜色和字体
+
+skinparam backgroundColor #AAFFFF
+skinparam activity {
+'开始的颜色
+StartColor red
+BarColor SaddleBrown
+'结束的颜色
+EndColor Silver
+'活动的背景颜色
+BackgroundColor Peru
+'自定义样式，使用时需要指定
+BackgroundColor<< Begin >> Olive
+'边框的颜色
+BorderColor Peru
+'字体
+FontName Impact
+}
+(*) --> "Climbs on Platform" << Begin >>
+--> === S1 ===
+--> Bows
+--> === S2 ===
+--> WavesArmes
+--> (*)
+
+@enduml

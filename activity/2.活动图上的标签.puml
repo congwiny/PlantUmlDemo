@@ -1,0 +1,6 @@
+@startuml
+'可以用 [xxxx] 放在箭头的后面来添加标签
+(*) --> "First Activity"
+-->[You can put also labels] "Second Activity"
+--> (*)
+@enduml

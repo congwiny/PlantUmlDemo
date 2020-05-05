@@ -1,0 +1,10 @@
+@startuml
+'你可以使用 === code === 来显示同步条。
+(*) --> ===B1===
+--> "Parallel Activity 1"
+--> ===B2===
+
+===B1=== --> "Parallel Activity 2"
+--> ===B2===
+--> (*)
+@enduml

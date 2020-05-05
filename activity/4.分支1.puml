@@ -1,0 +1,12 @@
+@startuml
+'你可以使用关键字 if/then/else 创建分支
+(*) --> "Initialization"
+if "Some Test" then
+-->[true] "Some Activity"
+--> "Another activity"
+-right-> (*)
+else
+->[false] "Something else"
+-->[Ending process] (*)
+endif
+@enduml
