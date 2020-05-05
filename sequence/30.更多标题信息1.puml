@@ -1,0 +1,10 @@
+@startuml
+'你可以在标题中使用 creole 格式。
+'在标题描述中使用 \n 表示换行。
+
+title __Simple__ **communication**  example\non several lines
+
+Alice -> Bob: Authentication Request
+Bob -> Alice: Authentication Response
+
+@enduml

@@ -1,0 +1,83 @@
+https://plantuml-documentation.readthedocs.io/en/latest/diagrams/sequence.html
+
+Sequence {
+
+   General:
+
+       TitleFontColor
+       TitleFontName
+       TitleFontSize
+       TitleFontStyle
+
+       NewpageSeparatorColor
+
+    ActorBorderThickness
+
+    ArrowThickness
+
+
+    DelayFontColor
+    DelayFontName
+    DelayFontSize
+    DelayFontStyle
+
+    DividerBackgroundColor
+    DividerBorderColor
+    DividerBorderThickness
+    DividerFontColor
+    DividerFontName
+    DividerFontSize
+    DividerFontStyle
+
+    GroupBackgroundColor
+    GroupBodyBackgroundColor
+    GroupBorderColor
+    GroupBorderThickness
+    GroupFontColor
+    GroupFontName
+    GroupFontSize
+    GroupFontStyle
+    GroupHeaderFontColor
+    GroupHeaderFontName
+    GroupHeaderFontSize
+    GroupHeaderFontStyle
+
+
+    LifeLineBackgroundColor
+    LifeLineBorderColor
+    LifeLineBorderThickness
+
+
+    MessageAlignment
+    MessageTextAlignment
+
+    Participant
+    ParticipantBorderThickness
+
+    ReferenceAlignment
+    ReferenceBackgroundColor
+    ReferenceBorderColor
+    ReferenceBorderThickness
+    ReferenceFontColor
+    ReferenceFontName
+    ReferenceFontSize
+    ReferenceFontStyle
+    ReferenceHeaderBackgroundColor
+
+
+Misc (not [yet] associated with a keyword or option):
+
+    BoxBackgroundColor
+    BoxBorderColor
+    BoxFontColor
+    BoxFontName
+    BoxFontSize
+    BoxFontStyle
+
+
+    StereotypeFontColor
+    StereotypeFontName
+    StereotypeFontSize
+    StereotypeFontStyle
+
+}

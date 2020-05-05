@@ -1,0 +1,19 @@
+@startuml
+'你可以在双引号内指定编号的格式。
+'格式是由 Java 的 DecimalFormat 类实现的：
+'  (0 表示数字； # 也表示数字，但默认为 0)。
+'你也可以用 HTML 标签来制定格式
+
+autonumber "<b>[000]"
+Bob -> Alice : Authentication Request
+Bob <- Alice : Authentication Response
+
+autonumber 15 "<b>(<u>##</u>)"
+Bob -> Alice : Another authentication Request
+Bob <- Alice : Another authentication Response
+
+autonumber 40 10 "<font color=red><b>Message 0 "
+Bob -> Alice : Yet another authentication Request
+Bob <- Alice : Yet another authentication Response
+
+@enduml

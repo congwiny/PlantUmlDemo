@@ -1,0 +1,10 @@
+@startuml
+'使用 hide footbox 关键字移除脚注。
+
+hide footbox
+title Footer removed
+
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+@enduml

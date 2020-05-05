@@ -1,0 +1,13 @@
+@startuml
+'还可以使用关键字 title 和 end title 定义多行标题。
+
+title
+<u>Simple</u> communication example
+on <i>several</i> lines and using <font color=red>html</font>
+This is hosted by <img:img.png>
+end title
+
+Alice -> Bob: Authentication Request
+Bob -> Alice: Authentication Response
+
+@enduml

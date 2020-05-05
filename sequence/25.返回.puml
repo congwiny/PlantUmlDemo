@@ -1,0 +1,10 @@
+@startuml
+'return命令为了生成返回的消息，
+'返回的点就是最近激活的生命线
+
+Bob -> Alice : hello
+activate Alice
+Alice -> Alice : some action
+return bye
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+'还可以使用嵌套的生命线，并且运行给生命线添加颜色。
+
+participant User
+User -> A: DoWork
+activate A #FFBBBB
+
+A -> A: Internal call
+activate A #DarkSalmon
+
+A -> B: << createRequest >>
+activate B
+
+B --> A: RequestCreated
+deactivate B
+deactivate A
+
+A -> User: Done
+deactivate A
+
+@enduml

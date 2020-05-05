@@ -1,0 +1,5 @@
+@startuml
+'你可以用以下记号修改箭头的颜色：
+Bob -[#red]> Alice : hello
+Alice -[#0000FF]->Bob : ok
+@enduml

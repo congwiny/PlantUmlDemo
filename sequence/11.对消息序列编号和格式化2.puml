@@ -1,0 +1,26 @@
+@startuml
+'你还可以用语句：
+'autonumber stop 和 autonumber resume increment format
+'来表示暂停或继续使用自动编号。
+
+autonumber 10 10 "<b>[000]"
+Bob -> Alice : Authentication Request
+Bob <- Alice : Authentication Response
+autonumber stop
+
+Bob -> Alice : dummy
+
+' resume时增加10
+autonumber resume "<font color=red><b>Message 0 "
+Bob -> Alice : Yet another authentication Request
+Bob <- Alice : Yet another authentication Response
+autonumber stop
+
+Bob -> Alice : dummy
+
+' resume时增加1
+autonumber resume 1 "<font color=blue><b>Message 0 "
+Bob -> Alice : Yet another authentication Request
+Bob <- Alice : Yet another authentication Response
+
+@enduml

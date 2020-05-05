@@ -1,0 +1,16 @@
+@startuml
+'关键字 as 用于重命名参与者
+'你可以使用 RGB 值或者颜色名修改 actor 或参与者的背景颜色。
+
+actor Bob #red
+'actor 和 participant 的唯一区别就是绘制
+participant Alice
+participant "I have a really\nlong name" as L #99FF99
+/'你也可以这样声明:
+  participant L as "I have a really\nlong name" #99FF99
+'/
+Alice->Bob: Authentication Request
+Bob->Alice: Authentication Response
+Bob->L: Log transaction
+
+@enduml

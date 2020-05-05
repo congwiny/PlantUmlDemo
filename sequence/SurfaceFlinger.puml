@@ -1,0 +1,546 @@
+@startuml
+hide footbox
+skinparam {
+    ' defaultFontName Abyssinica SIL
+    Shadowing false  
+    backgroundColor white
+    NoteFontColor #OrangeRed
+    ' NoteFontColor #Black
+    NoteFontSize 16
+    NoteTextAlignment left
+    NoteBackgroundColor WhiteSmoke
+    NoteColor transparent
+    NoteBorderThickness 0
+    NoteBorderColor transparent
+    NoteBorderThickness 0
+    NoteShadowing false
+    ParticipantPadding 0
+    BoxPadding 20
+    dpi 96
+
+    ClassBackgroundColor transparent
+    ClassHeaderBackgroundColor lightgreen
+    ClassStereotypeFontColor transparent
+
+    SequenceBoxBordercolor YellowGreen
+    SequenceBoxFontSize 48
+    SequenceBoxFontColor Black
+    SequenceBoxBackgroundColor #F8F8F8
+    SequenceLifeLineBackgroundColor WhiteSmoke
+    SequenceMessageAlignment center
+    SequenceGroupHeaderFontColor Black
+    SequenceGroupHeaderFontSize 20
+    ' SequenceGroupBackgroundColor DarkOliveGreen
+    SequenceGroupBackgroundColor transparent
+    SequenceGroupBodyBackgroundColor transparent
+    SequenceGroupBorderThickness 4
+    ' SequenceGroupBorderColor DarkOliveGreen
+    SequenceGroupBorderColor Gray
+    ' transparent
+    sequence {
+        ParticipantBackgroundColor WhiteSmoke
+        ParticipantBorderColor Gray
+        ParticipantFontStyle Bold
+        ParticipantFontSize 12
+        ParticipantPadding 0
+
+        LifeLineBorderColor DimGray
+        ArrowColor Black
+        ArrowThickness 0.8
+        ColorArrowSeparationSpace 30
+    }
+}
+
+
+' participant SurfaceComposerClient
+
+' box Client
+' participant Client
+' end box
+
+' participant MonitoredProducer
+' participant SurfaceFlingerConsumer
+' participant Layer
+' participant GLES20RenderEngine
+' participant EGLContext
+' participant RenderEngine
+' participant BufferQueue
+
+
+box SurfaceFlinger #EEFFFF
+participant DisplayDevice
+participant SurfaceFlinger
+participant "[sfVsyncSrc]\nEventThread" as sfEventThread
+participant Connection
+participant BitTube
+participant MessageQueue
+participant Looper
+' participant Handler
+participant HWComposer
+end box
+
+
+' participant Event
+' participant DispSync
+' participant DispSyncSource
+
+' participant "[vsyncSrc]\nEventThread" as EventThread
+
+' participant FramebufferSurface
+' participant EventControlThread
+' participant StartPropertySetThread
+
+
+box HWC2 Client #EEFFFF
+participant "HWC2::Device" as Device
+participant Composer
+participant ComposerCallbackBridge
+' participant SurfaceInterceptor
+end box
+
+box HWC2 Server #FFDDDD
+participant ComposerClient
+participant HwcHal
+' participant CommandReader
+' participant hwc2_device_t
+end box
+
+-->SurfaceFlinger:new
+SurfaceFlinger->SurfaceFlinger:onFirstRef()
+activate SurfaceFlinger
+create MessageQueue
+SurfaceFlinger->MessageQueue:init()
+activate MessageQueue
+SurfaceFlinger-->o MessageQueue:mFlinger
+deactivate SurfaceFlinger
+
+create Looper
+MessageQueue-->Looper:new
+Looper-->o MessageQueue:mLooper
+' MessageQueue-->Handler:new
+' Handler-->o MessageQueue:mHandler
+deactivate MessageQueue
+
+->SurfaceFlinger:init()
+activate SurfaceFlinger
+note right:mEGLDisplay = eglGetDisplay()\n\
+eglInitialize(mEGLDisplay,...)
+
+' SurfaceFlinger-->DispSync:new
+' DispSync-->o SurfaceFlinger:<color blue>**mPrimaryDispSync**</color>
+' SurfaceFlinger-->DispSyncSource:new
+' DispSync-->o DispSyncSource:<color blue>**mDispSync**</color>
+
+
+' create EventThread
+' SurfaceFlinger-->EventThread:new
+' DispSyncSource-->o EventThread:<color blue>**mVSyncSource**</color>
+' EventThread-[#Blue]->o SurfaceFlinger:<color blue>**mEventThread**</color>
+
+' EventThread->EventThread:threadLoop()
+' activate EventThread
+' EventThread->EventThread:waitForEvent()
+' activate EventThread
+' note over EventThread:mCondition.wait()...
+
+group mSFEventThread
+create sfEventThread
+SurfaceFlinger-->sfEventThread:new
+note right:onHotplugReceived()\n\
+onScreenAcquired()\n\
+onScreenReleased()\n\
+setPhaseOffset()
+sfEventThread->sfEventThread:threadLoop()
+activate sfEventThread
+sfEventThread->sfEventThread:waitForEvent()
+activate sfEventThread
+note over sfEventThread:mCondition.wait()...
+sfEventThread-[#Blue]->o SurfaceFlinger:<color blue>**mSFEventThread**</color>
+
+SurfaceFlinger->MessageQueue:setEventThread()
+activate MessageQueue
+sfEventThread-->o MessageQueue:<color blue>**mEventThread**</color>
+
+MessageQueue->sfEventThread:createEventConnection()
+activate sfEventThread
+create Connection
+sfEventThread-->Connection:new
+create BitTube
+Connection-->BitTube:new
+BitTube-->o Connection:<color blue>**mChannel**</color>
+BitTube->BitTube:init()
+note over BitTube:mSendFd&mSendFd
+sfEventThread->Connection:<color blue>**mEventThread**</color>
+deactivate sfEventThread
+Connection-->o MessageQueue:mEvents
+MessageQueue->Connection:stealReceiveChannel()
+deactivate MessageQueue
+Connection-->BitTube:<color blue>**mReceiveFd**</color>
+
+sfEventThread->Connection:onFirstRef()
+activate Connection
+Connection->sfEventThread:registerDisplayEventConnection()
+activate sfEventThread
+Connection-->o sfEventThread:<color blue>**mDisplayEventConnections.add()**</color>
+end group
+
+deactivate Connection
+' sfEventThread->sfEventThread:mCondition.broadcast()
+deactivate sfEventThread
+' note over sfEventThread:RESUME
+deactivate sfEventThread
+
+' sfEventThread->sfEventThread:enableVSyncLocked()
+' note left:(!timestamp && waitForVSync)
+
+' SurfaceFlinger->RenderEngine:create()
+' activate RenderEngine
+' RenderEngine-->EGLContext:new
+' RenderEngine-->GLES20RenderEngine:new
+' EGLContext-[#Blue]->o GLES20RenderEngine:<color blue>**mEGLContext**</color>
+' deactivate RenderEngine
+' GLES20RenderEngine-[#Blue]->o SurfaceFlinger:<color blue>**mRenderEngine**</color>
+' EGLContext-[#Blue]->o SurfaceFlinger:<color blue>**mEGLContext**</color>
+
+create HWComposer
+SurfaceFlinger-->HWComposer:new
+group HWComposer
+create Device
+HWComposer-->Device:new
+note left:std::make_unique<HWC2::Device>
+
+create Composer
+Device-->Composer:new
+activate Composer
+' HwcHal-->hwc2_device_t:new
+' hwc2_device_t-->o HwcHal:mDevice
+create HwcHal
+Composer-->HwcHal:HIDL_FETCH_IComposer()
+HwcHal-->HwcHal:new
+activate HwcHal
+HwcHal->HwcHal:initCapabilities()
+activate HwcHal
+deactivate HwcHal
+HwcHal->HwcHal:initDispatch()
+activate HwcHal
+deactivate HwcHal
+HwcHal-[#Blue]->o Composer:<color blue>**mComposer**</color>
+deactivate HwcHal
+Composer->HwcHal:createClient()
+activate HwcHal
+create ComposerClient
+HwcHal-->ComposerClient:new
+activate ComposerClient
+HwcHal->ComposerClient:initialize()
+' ComposerClient->ComposerClient:createCommandReader()
+' ComposerClient-->CommandReader:new
+' CommandReader-[#Blue]->o ComposerClient:mReader
+ComposerClient-[#Blue]->o HwcHal:<color blue>**mClinet**</color>
+deactivate HwcHal
+deactivate ComposerClient
+ComposerClient-[#Blue]->o Composer:<color blue>**mClinet**</color>
+deactivate Composer
+Composer-[#Blue]->o Device:<color blue>**mComposer**</color>
+Device-[#Blue]->o HWComposer:<color blue>**mHwcDevice**</color>
+end group
+
+HWComposer-[#Blue]->o SurfaceFlinger:<color blue>**mHwc**</color>
+SurfaceFlinger->HWComposer:registerCallback()
+
+group Register Callback
+HWComposer->Device:registerCallback()
+
+create ComposerCallbackBridge
+Device-->ComposerCallbackBridge:new
+Device->Composer:registerCallback()
+Composer->ComposerClient:registerCallback()
+end group
+
+SurfaceFlinger-[#Blue]->o ComposerClient:<color blue>**mCallback**</color>
+note right:**onHotplug()**\n\
+**onRefresh()**\n\
+**onVsync()**
+' SurfaceFlinger-->BufferQueue:createBufferQueue()
+' SurfaceFlinger-->FramebufferSurface:new
+' SurfaceFlinger-->DisplayDevice:new
+' FramebufferSurface-[#Blue]->o DisplayDevice:mDisplaySurface
+' DisplayDevice-[#Blue]->o SurfaceFlinger:mDisplays.add()
+
+' SurfaceFlinger-->EventControlThread:new
+' SurfaceFlinger->EventControlThread:run()
+' EventControlThread->EventControlThread:threadLoop()
+' activate EventControlThread
+' note over EventControlThread:**mCond.wait()...**
+
+SurfaceFlinger->SurfaceFlinger:initializeDisplays()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:onInitializeDisplays()
+note left:MessageScreenInitialized
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:setTransactionState()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:setTransactionFlags()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:signalTransaction()
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+
+
+' SurfaceFlinger->GLES20RenderEngine:primeCache()
+
+' SurfaceFlinger-->StartPropertySetThread:new
+' SurfaceFlinger->StartPropertySetThread:Start()
+' deactivate SurfaceFlinger
+' StartPropertySetThread->StartPropertySetThread:threadLoop()
+' activate StartPropertySetThread
+' note over StartPropertySetThread:**property_set(...)**
+
+
+
+->SurfaceFlinger:run()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:waitForEvent()
+activate SurfaceFlinger
+SurfaceFlinger->MessageQueue:waitMessage()
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+' activate MessageQueue
+MessageQueue->Looper:pollOnce()
+Looper->Looper:pollInner()
+Looper->BitTube:<color red>**epoll_wait(mReceiveFd)...**</color>
+activate Looper
+note over Looper: Waiting...
+
+
+=== Waiting... ==
+group hotplugHook()
+HwcHal<[#Red]-:<color red>**hotplugHook()**</color>
+HwcHal->ComposerClient:onHotplug()
+ComposerClient->ComposerCallbackBridge:onHotplug()
+ComposerCallbackBridge->SurfaceFlinger:onHotplugReceived()
+activate SurfaceFlinger
+SurfaceFlinger->HWComposer:onHotplug()
+SurfaceFlinger->SurfaceFlinger:createBuiltinDisplayLocked()
+SurfaceFlinger->SurfaceFlinger:createDefaultDisplayDevice()
+' SurfaceFlinger-->FramebufferSurface:new
+create DisplayDevice
+SurfaceFlinger-->DisplayDevice:new
+DisplayDevice-->o SurfaceFlinger:mDisplays.add()
+SurfaceFlinger->DisplayDevice:setCompositionDataSpace()
+SurfaceFlinger->DisplayDevice:makeCurrent()
+deactivate SurfaceFlinger
+end group
+
+
+group onRefresh()
+HwcHal<[#Red]-:<color red>**refreshHook()**</color>
+HwcHal->ComposerClient:onRefresh()
+ComposerClient->ComposerCallbackBridge:onRefresh()
+ComposerCallbackBridge->SurfaceFlinger:onRefreshReceived()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:repaintEverythingLocked()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:signalTransaction()
+activate SurfaceFlinger
+SurfaceFlinger->MessageQueue:invalidate()
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+MessageQueue->Connection:requestNextVsync()
+Connection->sfEventThread:requestNextVsync()
+activate sfEventThread
+sfEventThread-[#Blue]>sfEventThread:mCondition.broadcast()
+deactivate sfEventThread
+
+note over sfEventThread:RESUME
+sfEventThread->Connection:postEvent()
+Connection->BitTube:<color red>**sendObjects()**</color>
+end group
+
+note over Looper:RESUME by <color black>**[RESPONSE]**</color>
+Looper->MessageQueue:cb_eventReceiver()
+activate MessageQueue
+note right:mResponses
+MessageQueue->MessageQueue:eventReceiver()
+activate MessageQueue
+MessageQueue->MessageQueue:dispatchInvalidate()
+activate MessageQueue
+MessageQueue->Looper:sendMessage()
+deactivate MessageQueue
+deactivate MessageQueue
+deactivate MessageQueue
+activate Looper
+Looper->Looper:sendMessageAtTime()
+deactivate Looper
+
+group MessageQueue::INVALIDATE
+note over Looper:RESUME by <color black>**[MESSAGE]**</color>
+Looper->MessageQueue:handleMessage()
+note right:mMessageEnvelopes
+activate MessageQueue
+MessageQueue->SurfaceFlinger:onMessageReceived()
+deactivate MessageQueue
+activate SurfaceFlinger
+note left:MessageQueue::INVALIDATE
+SurfaceFlinger->SurfaceFlinger:handleMessageTransaction()
+SurfaceFlinger->SurfaceFlinger:handleMessageInvalidate()
+SurfaceFlinger->SurfaceFlinger:signalRefresh()
+SurfaceFlinger->MessageQueue:refresh()
+deactivate SurfaceFlinger
+activate MessageQueue
+MessageQueue->MessageQueue:dispatchRefresh()
+MessageQueue->Looper:sendMessage()
+deactivate MessageQueue
+Looper->Looper:sendMessageAtTime()
+end group
+' SinglerFresh()
+
+
+' ->SurfaceFlinger:signalRefresh()
+
+group MessageQueue::REFRESH
+note over Looper:RESUME by <color black>**[MESSAGE]**</color>
+Looper->MessageQueue:handleMessage()
+activate MessageQueue
+MessageQueue->SurfaceFlinger:onMessageReceived()
+deactivate MessageQueue
+activate SurfaceFlinger
+note left:MessageQueue::REFRESH
+SurfaceFlinger->SurfaceFlinger:handleMessageRefresh()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:preComposition()
+SurfaceFlinger->SurfaceFlinger:rebuildLayerStacks()
+SurfaceFlinger->SurfaceFlinger:setUpHWComposer()
+SurfaceFlinger->SurfaceFlinger:doDebugFlashRegions()
+SurfaceFlinger->SurfaceFlinger:doComposition()
+activate SurfaceFlinger
+SurfaceFlinger->DisplayDevice:getDirtyRegion()
+SurfaceFlinger->SurfaceFlinger:doDisplayComposition()
+activate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:doComposeSurfaces()
+activate SurfaceFlinger
+deactivate SurfaceFlinger
+SurfaceFlinger->DisplayDevice:swapBuffers()
+deactivate SurfaceFlinger
+SurfaceFlinger->DisplayDevice:flip()
+deactivate SurfaceFlinger
+SurfaceFlinger->SurfaceFlinger:postComposition
+SurfaceFlinger->HWComposer:getPresentFence()
+SurfaceFlinger->HWComposer:hasClientComposition()
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+end group
+
+
+group onVsync()
+HwcHal<[#Red]-:<color red>**vsyncHook()**</color>
+HwcHal->ComposerClient:onVsync()
+ComposerClient->ComposerCallbackBridge:onVsync()
+ComposerCallbackBridge->SurfaceFlinger:onVsyncReceived()
+activate SurfaceFlinger
+SurfaceFlinger->HWComposer:onVsync()
+HWComposer->Device:getDisplayById()
+' SurfaceFlinger->DispSync:addResyncSample()
+SurfaceFlinger->SurfaceFlinger:enableHardwareVsync()
+activate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate SurfaceFlinger
+end group
+
+
+' ->SurfaceFlinger:handleTransactionLocked()
+' ->sfEventThread:onHotplugReceived()
+' Event-->o sfEventThread:mPendingEvents.add()
+' sfEventThread->sfEventThread:mCondition.broadcast()
+' ' note over sfEventThread:RESUME
+' MessageQueue->Connection:stealReceiveChannel()
+' deactivate MessageQueue
+' ->Layer:onDraw()
+' Layer->Layer:drawWithOpenGL()
+' Layer->SurfaceFlinger:getRenderEngine()
+' Layer->GLES20RenderEngine:setupLayerBlending()
+' Layer->GLES20RenderEngine:drawMesh()
+' Layer->GLES20RenderEngine:disableBlending()
+
+
+
+' -->SurfaceComposerClient:new
+' SurfaceComposerClient->SurfaceComposerClient:onFirstRef()
+' Client-[#Blue]->o SurfaceComposerClient:<color blue>**mClinet**</color>
+' ->SurfaceComposerClient:createSurface()
+' SurfaceComposerClient->Client:createSurface()
+' activate Client
+' Client->Client:getParentLayer()
+' note left:(parent == nullptr)
+' ' Client-->MessageCreateLayer:new
+' ' Client->SurfaceFlinger:postMessageSync()
+' Client->SurfaceFlinger:createLayer()
+' note left:MessageCreateLayer
+' activate SurfaceFlinger
+' SurfaceFlinger->SurfaceFlinger:createNormalLayer()
+' activate SurfaceFlinger
+
+' SurfaceFlinger-->Layer:new
+' activate Layer
+' SurfaceFlinger-[#Blue]->o Layer:<color blue>**mFlinger**</color>
+' Layer->GLES20RenderEngine:genTextures()
+' GLES20RenderEngine->Layer:set: mTextureName
+' Layer->SurfaceFlinger:getDefaultDisplayDevice()
+' activate SurfaceFlinger
+' SurfaceFlinger->SurfaceFlinger:getDefaultDisplayDeviceLocked()
+' activate SurfaceFlinger
+' SurfaceFlinger->SurfaceFlinger:getDisplayDeviceLocked()
+' activate SurfaceFlinger
+' deactivate SurfaceFlinger
+' deactivate SurfaceFlinger
+' deactivate SurfaceFlinger
+
+' Layer->Layer:updateTransformHint()
+' activate Layer
+' Layer->SurfaceFlingerConsumer:setTransformHint()
+' deactivate Layer
+' deactivate Layer
+
+' Layer->Layer:onFirstRef()
+' activate Layer
+' Layer-->MonitoredProducer:new
+' SurfaceFlinger-[#Blue]->o MonitoredProducer:<color blue>**mFlinger**</color>
+' Layer->BufferQueue:createBufferQueue()
+' MonitoredProducer-[#Blue]->o Layer:<color blue>**mProducer**</color>
+' Layer-->SurfaceFlingerConsumer:new
+' Layer-[#Blue]->o SurfaceFlingerConsumer:mLayer
+' SurfaceFlingerConsumer-[#Blue]->o Layer:<color blue>**mSurfaceFlingerConsumer**</color>
+' Layer->SurfaceFlingerConsumer:setConsumerUsageBits()
+' Layer->SurfaceFlingerConsumer:setContentsChangedListener()
+' Layer-[#Blue]->o SurfaceFlingerConsumer:<color blue>**mContentsChangedListener**</color>
+' Layer->SurfaceFlingerConsumer:setName()
+' deactivate Layer
+
+' SurfaceFlinger->Layer:setBuffers()
+' activate Layer
+' Layer->Layer:getOpacityForFormat()
+' activate Layer
+' deactivate Layer
+' Layer->SurfaceFlingerConsumer:setDefaultBufferSize()
+' Layer->SurfaceFlingerConsumer:setDefaultBufferFormat()
+' Layer->SurfaceFlingerConsumer:setConsumerUsageBits()
+' deactivate Layer
+
+' SurfaceFlinger->Layer:getHandle()
+' SurfaceFlinger->Layer:getProducer()
+' SurfaceFlinger->Layer:setInfo()
+' deactivate SurfaceFlinger
+
+' SurfaceFlinger->SurfaceFlinger:addClientLayer()
+' activate SurfaceFlinger
+' MonitoredProducer-[#Blue]->o SurfaceFlinger:<color blue>**mGraphicBufferProducerList**</color>
+' SurfaceFlinger->Client:attachLayer()
+' deactivate SurfaceFlinger
+' ' SurfaceFlinger->SurfaceInterceptor:saveSurfaceCreation()
+' deactivate SurfaceFlinger
+' Layer-[#Blue]->o Client:mLayers
+' deactivate Client
+@enduml

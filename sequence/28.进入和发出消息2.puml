@@ -1,0 +1,17 @@
+@startuml
+'还可以使用下面的语法:
+
+[-> Bob:a
+[o-> Bob:b
+[o->o Bob
+[x-> Bob
+[<- Bob
+[x<- Bob
+Bob ->]
+Bob ->o]
+Bob o->o]
+Bob ->x]
+Bob <-]
+Bob x<-]
+
+@enduml
